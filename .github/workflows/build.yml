@@ -27,6 +27,7 @@ jobs:
             -DANDROID_ABI=armeabi-v7a \
             -DANDROID_PLATFORM=android-26 \
             -DANDROID_STL=c++_static \
+            -DGGML_LLAMAFILE=OFF \
             -DCMAKE_BUILD_TYPE=Release \
             -DBRIDGE_CLASS="$CLASS"
           cmake --build build --config Release -j$(nproc) --target llamabridge
