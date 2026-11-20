@@ -1,0 +1,32 @@
+name: Build llama shared
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone llama.cpp
+        run: git clone --depth 1 https://github.com/ggml-org/llama.cpp
+      - name: Build
+        run: |
+          cmake -S llama.cpp -B out \
+            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-28 \
+            -DBUILD_SHARED_LIBS=ON \
+            -DGGML_OPENMP=OFF \
+            -DLLAMA_CURL=OFF \
+            -DLLAMA_BUILD_TESTS=OFF \
+            -DLLAMA_BUILD_EXAMPLES=OFF \
+            -DLLAMA_BUILD_SERVER=OFF
+          cmake --build out -j4
+      - name: Cek dependensi
+        run: |
+          find out -name "*.so" | while read f; do
+            echo "== $f"
+            readelf -d "$f" | grep NEEDED
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: semua-so
+          path: out/**/*.so
