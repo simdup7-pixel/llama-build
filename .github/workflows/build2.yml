@@ -19,7 +19,7 @@ jobs:
             -DLLAMA_BUILD_TESTS=OFF \
             -DLLAMA_BUILD_EXAMPLES=OFF \
             -DLLAMA_BUILD_SERVER=OFF
-          cmake --build out -j4
+          cmake --build out -j4 --target llama ggml
       - name: Cek dependensi
         run: |
           find out -name "*.so" | while read f; do
