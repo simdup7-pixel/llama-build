@@ -20,6 +20,13 @@ jobs:
             -DLLAMA_BUILD_EXAMPLES=OFF \
             -DLLAMA_BUILD_SERVER=OFF
           cmake --build out -j4 --target llama ggml
+      - name: Build bridge
+        run: |
+          $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android28-clang++ \
+            -shared -fPIC -O2 -std=c++17 -static-libstdc++ \
+            -I llama.cpp/include -I llama.cpp/ggml/include \
+            bridge.cpp -o out/bin/libllamabridge.so \
+            -Lout/bin -lllama -llog
       - name: Cek dependensi
         run: |
           find out -name "*.so" | while read f; do
